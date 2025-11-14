@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface CurrencyResponse {
   [currencyCode: string]: string;
@@ -39,7 +40,7 @@ export interface UserHistory {
 })
 export class Currency {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:3000';
+  private readonly apiUrl = environment.apiUrl;
 
   getCurrencies(): Observable<CurrencyResponse> {
     return this.http.get<CurrencyResponse>(`${this.apiUrl}`);

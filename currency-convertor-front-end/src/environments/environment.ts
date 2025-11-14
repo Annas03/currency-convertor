@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-backend-app.onrender.com' // Replace with your actual Render backend URL
+  apiUrl: 'https://currency-convertor-sbp0.onrender.com/',
 };
