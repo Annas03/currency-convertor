@@ -1,5 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { AppService } from './app.service';
+import {
+  ExchangeRateQueryDto,
+  LatestExchangeRateQueryDto,
+} from './dto/exchange-rate-query.dto';
 
 @Controller()
 export class AppController {
@@ -11,14 +15,12 @@ export class AppController {
   }
 
   @Get('/exchange-rate')
-  getExchangeRate(
-    @Query()
-    query: {
-      date: string;
-      base_currency?: string;
-      currencies?: string;
-    },
-  ) {
+  getExchangeRate(@Query() query: ExchangeRateQueryDto) {
     return this.appService.getHistoricalExchangeRate(query);
+  }
+
+  @Get('/latest-exchange-rate')
+  getLatestExchangeRate(@Query() query: LatestExchangeRateQueryDto) {
+    return this.appService.getLatestExchangeRate(query);
   }
 }

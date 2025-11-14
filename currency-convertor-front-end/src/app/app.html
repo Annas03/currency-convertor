@@ -1,0 +1,172 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Currency Converter</h1>
+      <p class="text-gray-600">Convert currencies using real-time exchange rates</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 mb-8">
+      <form [formGroup]="convertorForm" (ngSubmit)="convert()" class="space-y-6">
+        <div>
+          <label for="from-currency" class="block text-sm font-medium text-gray-700 mb-2">
+            From
+          </label>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+              <select
+                id="from-currency"
+                formControlName="baseCurrency"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900"
+              >
+                @for (currency of currenciesData; track currency.code) {
+                <option [value]="currency.code">{{ currency.code }} - {{ currency.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="flex-1">
+              <input
+                type="number"
+                [min]="0"
+                formControlName="basePrice"
+                placeholder="0.00"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label for="to-currency" class="block text-sm font-medium text-gray-700 mb-2"> To </label>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+              <select
+                id="to-currency"
+                formControlName="convertCurrency"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-gray-900"
+              >
+                @for (currency of currenciesData; track currency.code) {
+                <option [value]="currency.code">{{ currency.code }} - {{ currency.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="flex-1">
+              <input
+                type="number"
+                formControlName="convertPrice"
+                placeholder="0.00"
+                [disabled]="true"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-200 text-gray-900"
+              />
+            </div>
+          </div>
+        </div>
+        <div>
+          <label for="date-selector" class="block text-sm font-medium text-gray-700 mb-2">
+            Historical Exchange Rate (Optional)
+          </label>
+          <input
+            type="date"
+            id="date-selector"
+            formControlName="historicalDate"
+            [max]="maxDate"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          />
+        </div>
+        <button
+          type="submit"
+          [disabled]="convertorForm.invalid || loader"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ loader ? 'Converting...' : 'Convert' }}
+        </button>
+
+        @if( convertorForm.get('convertPrice')?.getRawValue() != 0 ) {
+        <div class="bg-indigo-50 rounded-lg p-4 text-center">
+          <p class="text-sm text-gray-600">Exchange Rate</p>
+          <p class="text-2xl font-bold text-indigo-600">
+            1 {{ convertorForm.get('baseCurrency')?.value }} = {{ exchangeValue }}
+            {{ convertorForm.get('convertCurrency')?.value }}
+          </p>
+        </div>
+        }
+      </form>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Conversion History</h2>
+
+      <div class="space-y-4">
+        @if (userHistoryLoader) {
+        <div class="text-center py-12">
+          <div
+            class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-600 border-r-transparent"
+          ></div>
+          <p class="text-gray-500 mt-4">Loading history...</p>
+        </div>
+        } @else if (userHistory.length === 0) {
+        <div class="text-center py-12">
+          <svg
+            class="w-16 h-16 mx-auto text-gray-400 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p class="text-gray-500">No conversion history yet</p>
+          <p class="text-sm text-gray-400 mt-1">Your conversions will appear here</p>
+        </div>
+        } @else { @for (history of userHistory; track history.id) {
+        <div
+          class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-150"
+        >
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div class="flex-1">
+              <p class="text-lg font-semibold text-gray-900">
+                {{ history.base_price }} {{ history.base_currency }} →
+                {{ history.conversion_price.toFixed(2) }} {{ history.conversion_currency }}
+              </p>
+              <p class="text-sm text-gray-500 mt-1">
+                Rate: 1 {{ history.base_currency }} = {{ history.exchange_rate }}
+                {{ history.conversion_currency }}
+                <span> of {{ history.historical_date }}</span>
+              </p>
+            </div>
+            <div class="text-sm text-gray-500">
+              <div class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <span>{{ formatDate(history.created_at) }}</span>
+              </div>
+              <div class="flex items-center gap-1 mt-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>{{ formatTime(history.created_at) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        } }
+      </div>
+    </div>
+  </div>
+</div>
+
+<router-outlet />

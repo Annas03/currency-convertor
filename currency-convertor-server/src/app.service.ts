@@ -1,20 +1,32 @@
 import { Injectable } from '@nestjs/common';
+import {
+  ExchangeRateQueryDto,
+  LatestExchangeRateQueryDto,
+} from './dto/exchange-rate-query.dto';
 
 @Injectable()
 export class AppService {
   async getCurrencies() {
-    const currencies = await fetch(
-      `https://api.freecurrencyapi.com/v1/currencies?apikey=4E0VK7BnkdeUuh1vegAt808v2IUjzUR6lxcvBMT2`,
+    const response = await fetch(
+      `https://api.freecurrencyapi.com/v1/currencies?apikey=fca_live_CmNgwhl9sgzQQA4ET1WHRxk7x7ZiT6UcBZyuyPjV`,
     );
-    console.log(currencies);
+    const currencies = await response.json();
     return currencies;
   }
 
-  async getHistoricalExchangeRate(params) {
-    const exchangeRate = await fetch(
-      `https://api.freecurrencyapi.com/v1/historical?apikey=4E0VK7BnkdeUuh1vegAt808v2IUjzUR6lxcvBMT2&date=2021-12-31`,
+  async getHistoricalExchangeRate(params: ExchangeRateQueryDto) {
+    const response = await fetch(
+      `https://api.freecurrencyapi.com/v1/historical?apikey=fca_live_CmNgwhl9sgzQQA4ET1WHRxk7x7ZiT6UcBZyuyPjV&date=${params.date}&base_currency=${params.base_currency}&currencies=${params.currencies}`,
     );
-    console.log(exchangeRate);
+    const exchangeRate = await response.json();
+    return exchangeRate;
+  }
+
+  async getLatestExchangeRate(params: LatestExchangeRateQueryDto) {
+    const response = await fetch(
+      `https://api.freecurrencyapi.com/v1/latest?apikey=fca_live_CmNgwhl9sgzQQA4ET1WHRxk7x7ZiT6UcBZyuyPjV&base_currency=${params.base_currency}&currencies=${params.currencies}`,
+    );
+    const exchangeRate = await response.json();
     return exchangeRate;
   }
 }
