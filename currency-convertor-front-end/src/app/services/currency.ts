@@ -59,7 +59,7 @@ export class Currency {
       queryParams.currencies = params.currencies;
     }
 
-    return this.http.get<ExchangeRateResponse>(`${this.apiUrl}/exchange-rate`, {
+    return this.http.get<ExchangeRateResponse>(`${this.apiUrl}exchange-rate`, {
       params: queryParams,
     });
   }
@@ -75,7 +75,7 @@ export class Currency {
       queryParams.currencies = params.currencies;
     }
 
-    return this.http.get<ExchangeRateResponse>(`${this.apiUrl}/latest-exchange-rate`, {
+    return this.http.get<ExchangeRateResponse>(`${this.apiUrl}latest-exchange-rate`, {
       params: queryParams,
     });
   }
@@ -87,10 +87,10 @@ export class Currency {
 
     !queryParams?.historical_date && delete queryParams.historical_date;
 
-    return this.http.post<any>(`${this.apiUrl}/history`, queryParams);
+    return this.http.post<any>(`${this.apiUrl}history`, queryParams);
   }
 
   getUserHistory(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/history`);
+    return this.http.get<any>(`${this.apiUrl}history`);
   }
 }
