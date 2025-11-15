@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: 'https://currency-convertor-chi-ashy.vercel.app/',
+    origin: 'https://currency-convertor-chi-ashy.vercel.app',
     credentials: true,
   });
 
