@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConversionHistory } from './entities/conversion-history.entity';
 import { HistoryModule } from './history/history.module';
+import { JobsModule } from './jobs/jobs.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { HistoryModule } from './history/history.module';
       synchronize: true,
     }),
     HistoryModule,
+    JobsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
